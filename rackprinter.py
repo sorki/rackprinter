@@ -27,6 +27,27 @@ META = {
     'segments': segments,
 }
 
+# gt2
+def belt(l=100, r=6, w=6, h=1):
+    o = up(r-h/2.)(cube([l, w, h], center=True))
+    o += down(r-h/2.)(cube([l, w, h], center=True))
+    for i in [-1, 1]:
+        rot = 0
+        if i == -1:
+            rot = 180
+        o += left(i*l/2.)(rotate([90, 0, rot])(cylinder(r=r, h=w, center=True) - (
+                cylinder(r=r-1, h=w*10, center=True) +
+                right(r/2.)(cube([r, r*10, w*10],center=True)))))
+    return color(gray)(forward(-w/2.)(o))
+
+def pulley(r=6, rOut=8, rIn=2.5, h=16, hBot=7.5, hTop=1.5):
+    hMid=h-(hBot+hTop)
+    o = cylinder(r=rOut, h=hBot)
+    o += up(hBot)(cylinder(r=r, h=hMid))
+    o += up(hBot+hMid)(cylinder(r=rOut, h=hTop))
+    o -= down(0.1)(cylinder(r=rIn, h=h+0.1))
+    return color(green)(rotate([0, 90,0])(o))
+
 def rail(x=10, y=500, z=10, wall=1):
     w = wall
     o = cube([x, y, z], center=True)
@@ -38,6 +59,9 @@ def rack():
     o -= back(wall)(cube([rack_x - wall, rack_y, rack_z - wall], center=True))
     # dekel
     o -= up(rack_z/2.)(cube([200, 400, rack_z], True))
+
+    if not show_rack:
+        o = background(o)
     return o
 
 
@@ -45,15 +69,43 @@ def yaxis(yoff=0):
     # rails
     off = (x_axis_len/2. + carriage_z_bound)
     r = rotate([90, 0, 0])(profile2020_smooth(height=y_axis_len))
+
     o = left(off)(r)
     o += right(off)(r)
 
     # carriages
     l = carriage_x
     xoff = x_axis_len/2.
+    wo = 2 # belt way offset
+    boff = wo + 4 # belt offset
+    poff = wo + -4 # pulley offset
+    ypoff = y_axis_len/2. - y_axis_pulley_offset  # y pulley offset
+
+    belt_len = y_axis_len - (y_axis_pulley_offset * 2 - 1)
     for i in [-1, 1]:
         o += translate([i * (xoff), yoff, 0])(
                 rotate([90, 0, i*90])(carriage(l, carriage_y, carriage_z)))
+
+        # belts
+        o += translate([i * (xoff+boff), 0, 0])(rotate([0, 0, 90])(belt(belt_len)))
+
+        for j in [-1, 1]:
+            rot = 0
+            if i == 1:
+                rot = 1
+            o += translate([i * (xoff+poff), j*ypoff, 0])(
+                    rotate([0, 180*rot, 180])(pulley()))
+
+    # common rail
+    o += translate([0, ypoff, 0])(
+            color(black)(rotate([0, 90, 0])(cylinder(r=2.5, h=x_axis_len, center=True)))
+            + pulley())
+
+
+    # belt to pulley offset = 8
+    ys = y_axis_secondar_belt_len
+    o += translate([8, ypoff + ys/2. - 1, 0])(
+    rotate([0, 0, 90])(belt(ys)))
 
     return o
 

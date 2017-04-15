@@ -37,10 +37,10 @@ def carriage(x=50, y=50, z=10, d=False):
 
     # debug profile piece
     if d:
-        o += bg( up(22)(rotate([0, 90, 0])(profile2020_smooth(height = 50))) )
+        o += bg( up(carriage_z_bound)(rotate([0, 90, 0])(profile2020_smooth(height = 50))) )
 
     hobj = debug( bolt_hole(3, bh, tol) )
-    wheel = up(z + 12)(vwheel())
+    wheel = up(z + carriage_dist)(vwheel())
     for i in [-1, 1]:
         for j in [-1, 1]:
             o -= translate([i * xo, j * yo, -0.1])(hobj)

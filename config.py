@@ -1,9 +1,14 @@
 segments = 66
 tol = 0.1
 
+prof_w = 10
+
 rack_x = 600
 rack_y = 900
 rack_z = 900
+
+show_rack = False
+
 wall = 10
 
 gantry_up = 100
@@ -23,13 +28,18 @@ vrail_h = 666
 vrail_x_off = 60
 vrail_y_off = 60
 
-y_axis_len = rack_y
-x_axis_len = rack_x - 70
+y_axis_len = rack_y - 50
+x_axis_len = rack_x - 80
+
+y_axis_pulley_offset = 15
+
+y_axis_secondar_belt_len = 60
 
 carriage_x = 60
 carriage_y = 50
 carriage_z = 10
-carriage_z_bound = 22
+carriage_dist = 15
+carriage_z_bound = prof_w + carriage_dist
 
 # random combinators
 def lr(x): return(left(x), right(x))
