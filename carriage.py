@@ -27,14 +27,17 @@ def vwheel(r1=7, r2=11, h=4):
     o -= bolt_hole(3, 10, tol)
     return color(gray)(o)
 
-def carriage(x=50, y=50, z=10):
+def carriage(x=50, y=50, z=10, d=False):
     bh = 30
     xo = 15
     yo = 16 # don't touch this
     rot = 1 # and dis
+
     o = rounded(x, y, z)
 
-    o += bg( up(22)(rotate([0, 90, 0])(profile2020_smooth(height = 50))) )
+    # debug profile piece
+    if d:
+        o += bg( up(22)(rotate([0, 90, 0])(profile2020_smooth(height = 50))) )
 
     hobj = debug( bolt_hole(3, bh, tol) )
     wheel = up(z + 12)(vwheel())
@@ -45,6 +48,14 @@ def carriage(x=50, y=50, z=10):
 
         #o -= translate([i * xo, -yo, -0.1])(hobj)
         o -= debug(rotate([-rot, 0, 0])(translate([i * xo, -yo, 0])(hobj)))
+
+    # belt ways
+    # gt2 6mm?
+    beltw = 6
+    ups = z/2. + beltw/2.
+
+    for i in [-1, 1]:
+        o -= translate([0, i * 5, ups])(cube([x+2, 4, beltw], center=True))
     return o
 
 if __name__ == "__main__":

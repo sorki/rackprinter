@@ -10,6 +10,8 @@ class EventHandler(pyinotify.ProcessEvent):
         if '.py' in event.pathname:
             print("Compiling {}".format(event.pathname))
             os.system("python {}".format(event.pathname))
+            print("Compiling rackprinter")
+            os.system("python {}".format('rackprinter.py'))
             print("Ok")
 
 handler = EventHandler()
